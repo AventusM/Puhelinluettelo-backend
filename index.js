@@ -5,12 +5,16 @@ const app = express()
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
-//GET / POST / DELETE
+
+//GET
+//GET
 app.get('/api/persons', (req, res) => {
     res.json(persons)
 })
 
 //Ulkonäkö sovitettu täysin html:lle
+//Pituus haetaan tehtävänannon mukaisesti
+//muistissa olevasta taulukosta
 app.get('/info', (req, res) => {
     res.send(`
     <p>puhelinluettelossa ${persons.length} henkilöä</p>
@@ -25,9 +29,17 @@ app.get('/api/persons/:id', (req, res) => {
     if (person) {
         res.json(person)
     } else {
-        res.status(404).end()
+        res.status(404).send('<h1>404 not found</h1>').end()
     }
 
+})
+
+//DELETE
+//DELETE
+app.delete('/api/persons/:id', (req, res) => {
+    const personId = Number(req.params.id)
+    persons = persons.filter(person => person.id !== personId)
+    res.status(404).end()
 })
 
 //MUUTTUJAT

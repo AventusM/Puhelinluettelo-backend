@@ -7,8 +7,12 @@ const PORT = 3001
 
 app.listen(PORT)
 app.use(bodyParser.json())
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :jsonbody :status :res[content-length] - :response-time ms'))
 console.log(`Server running on port ${PORT}`)
+
+morgan.token('jsonbody', function getJSONBody(req, res) {
+    return JSON.stringify(req.body)
+})
 
 //GET
 //GET

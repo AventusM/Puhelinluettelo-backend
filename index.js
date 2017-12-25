@@ -3,13 +3,18 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser') // req body ---> json (varmistetaan POSTin oikeellisuutta)
 const morgan = require('morgan')
+const cors = require('cors')
 const PORT = 3001
 
 app.listen(PORT)
 app.use(bodyParser.json())
 app.use(morgan(':method :url :jsonbody :status :res[content-length] - :response-time ms'))
+//Laitetaan toinen npm start localhostiin 3000 (puhelinluettelon frontend)
+//-> POST toimii OPTIONSin sijasta
+app.use(cors())
 console.log(`Server running on port ${PORT}`)
 
+//Middleware - logger. Haetaan data HTTP-pyynnön jälkeen
 morgan.token('jsonbody', function getJSONBody(req, res) {
     return JSON.stringify(req.body)
 })

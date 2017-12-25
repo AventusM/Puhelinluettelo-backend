@@ -5,6 +5,8 @@ const bodyParser = require('body-parser') // req body ---> json (varmistetaan PO
 const morgan = require('morgan')
 const cors = require('cors')
 const PORT = process.env.PORT || 3001
+//Backend tarjoaa staattiset tiedostot
+app.use(express.static('build'))
 
 app.listen(PORT)
 app.use(bodyParser.json())

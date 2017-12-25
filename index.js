@@ -1,9 +1,11 @@
 //ASETUKSET
 const express = require('express')
 const app = express()
-
+const bodyParser = require('body-parser') // req body ---> json (varmistetaan POSTin oikeellisuutta)
 const PORT = 3001
+
 app.listen(PORT)
+app.use(bodyParser.json())
 console.log(`Server running on port ${PORT}`)
 
 //GET
@@ -40,6 +42,31 @@ app.delete('/api/persons/:id', (req, res) => {
     const personId = Number(req.params.id)
     persons = persons.filter(person => person.id !== personId)
     res.status(404).end()
+})
+
+//POST
+//POST
+app.post('/api/persons', (req, res) => {
+    const body = req.body
+    // let errors = ["", undefined]
+    //Kaikennäköisiä ratkaisuja yritetty tämän iffihässäkän eliminoimiseksi
+    //1. indexOf
+    //2. bodyContent.filter((content) => errors.includes(content)) tms jokin vastaava stackoverflowsta
+    if (body.name === "" || body.name === undefined || body.number === "" || body.number === undefined) {
+        res.status(400).json({ error: 'nimi tai numero puuttuu' })
+    } else if (persons.some(person => person.name === body.name)) {
+        //409 conflict
+        res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.floor(Math.random() * 100000)
+    }
+
+    persons = persons.concat(person)
+    res.json(person)
 })
 
 //MUUTTUJAT

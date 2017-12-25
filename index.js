@@ -2,10 +2,12 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser') // req body ---> json (varmistetaan POSTin oikeellisuutta)
+const morgan = require('morgan')
 const PORT = 3001
 
 app.listen(PORT)
 app.use(bodyParser.json())
+app.use(morgan('tiny'))
 console.log(`Server running on port ${PORT}`)
 
 //GET

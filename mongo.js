@@ -25,14 +25,14 @@ const person = new Person({
 //     console.log(`${index}: ${val}`);
 // });
 
-const noParams = process.argv[2] === undefined || process.argv[2] === undefined
+const noParams = process.argv[2] === undefined || process.argv[3] === undefined
 noParams ?
     Person
-        .find({}) // name, number parametreillä 'truthy' - tyyliin ei onnistunut...
+        .find({}, { name: 1, number: 1, _id: 0 }) // {} WHERE (ei rajoitteita), {name: ..., number: ..., ...} SELECT field FROM . . .
         .then(result => {
+            console.log('puhelinluettelo:')
             result.forEach(person => {
-                console.log('puhelinluettelo:')
-                console.log(person.name + " " + person.number)
+                console.log(person)
             })
             mongoose.connection.close()
         })

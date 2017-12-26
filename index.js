@@ -5,15 +5,17 @@ const bodyParser = require('body-parser') // req body ---> json (varmistetaan PO
 const morgan = require('morgan')
 const cors = require('cors')
 const PORT = process.env.PORT || 3001
+
+//Tietokannan hallinta siirretty omaan moduuliin
+const Person = require('./models/person')
+
+
 //Backend tarjoaa staattiset tiedostot
 app.use(express.static('build'))
-
 app.listen(PORT)
 app.use(bodyParser.json())
 app.use(morgan(':method :url :jsonbody :status :res[content-length] - :response-time ms'))
-//Laitetaan toinen npm start localhostiin 3000 (puhelinluettelon frontend)
-//-> POST toimii OPTIONSin sijasta
-app.use(cors())
+app.use(cors()) //samanaikaiset npm startit toimii nyt
 console.log(`Server running on port ${PORT}`)
 
 //Middleware - logger. Haetaan data HTTP-pyynnön jälkeen
@@ -21,15 +23,39 @@ morgan.token('jsonbody', function getJSONBody(req, res) {
     return JSON.stringify(req.body)
 })
 
+
+//Muokataan JSON-data sopivaan muotoon mapattavaksi
+const formatPerson = (person) => {
+    return {
+        name: person.name,
+        number: person.number,
+        id: person._id
+    }
+}
+
 //GET
 //GET
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person
+        .find({}) //Select * (ei rajoituksia koska vähän kenttiä)
+        .then(allPersons => {
+            // console.log(allPersons)
+            //Mapataan saatu taulukko alkio alkiolta Person - olioksi
+            res.json(allPersons.map(formatPerson))
+        }).catch((err => {
+            console.log(err)
+            res.status(404).end()
+        }))
 })
 
-//Ulkonäkö sovitettu täysin html:lle
-//Pituus haetaan tehtävänannon mukaisesti
-//muistissa olevasta taulukosta
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
+// MUISTA PÄIVITTÄÄ TÄMÄKIN
 app.get('/info', (req, res) => {
     res.send(`
     <p>puhelinluettelossa ${persons.length} henkilöä</p>
@@ -38,14 +64,19 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const personId = Number(req.params.id)
-    const person = persons.find(person => person.id === personId)
-    //laitetaan 404 jos ei löytynyt
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).send('<h1>404 not found</h1>').end()
-    }
+    Person
+        .findById(req.params.id)
+        .then(foundPerson => {
+            res.json(formatPerson(foundPerson))
+        })
+    // const personId = Number(req.params.id)
+    // const person = persons.find(person => person.id === personId)
+    // //laitetaan 404 jos ei löytynyt
+    // if (person) {
+    //     res.json(person)
+    // } else {
+    //     res.status(404).send('<h1>404 not found</h1>').end()
+    // }
 
 })
 

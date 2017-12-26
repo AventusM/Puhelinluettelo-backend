@@ -89,7 +89,7 @@ app.post('/api/persons', (req, res) => {
     const body = req.body
     if (body.name === "" || body.name === undefined || body.number === "" || body.number === undefined) {
         res.status(400).json({ error: 'nimi tai numero puuttuu' })
-    } else {
+    } else { //Ehkä voisi sisältää kopiotarkistuksen else - haaraan...?
         //Tietokanta luo nyt ID:n
         const person = new Person({
             name: body.name,
@@ -107,6 +107,7 @@ app.post('/api/persons', (req, res) => {
 //PUT
 app.put('/api/persons/:id', (req, res) => {
     const body = req.body
+
     const person = {
         name: body.name,
         number: body.number

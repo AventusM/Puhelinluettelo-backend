@@ -1,7 +1,11 @@
 const mongoose = require('mongoose')
-//Urli pitäisi piilottaa, tapahtuu varmaan lopuksi
-//Jokatapauksessa allaoleva user / pw combo vaihdetaan...
-const url = 'mongodb://ati:test@ds163796.mlab.com:63796/heroku_kk5s25mk'
+
+//ASETUS osan3 viimeisen tehtävän tapaan
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
+const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useMongoClient: true });
 mongoose.Promise = global.Promise;

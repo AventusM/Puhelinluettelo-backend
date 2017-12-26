@@ -48,19 +48,16 @@ app.get('/api/persons', (req, res) => {
         }))
 })
 
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
-// MUISTA PÄIVITTÄÄ TÄMÄKIN
 app.get('/info', (req, res) => {
-    res.send(`
-    <p>puhelinluettelossa ${persons.length} henkilöä</p>
-    <p>${new Date()}</p>
-    `)
+    Person
+        .find({})
+        .then(result => {
+            const pituus = result.length
+            res.send(`
+            <p>puhelinluettelossa ${pituus} henkilö(ä)</p>
+            <p>${new Date()}</p>
+            `)
+        })
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -72,15 +69,6 @@ app.get('/api/persons/:id', (req, res) => {
             console.log(err)
             res.status(404).send('<h2>404 not found</h2>').end()
         })
-    // const personId = Number(req.params.id)
-    // const person = persons.find(person => person.id === personId)
-    // //laitetaan 404 jos ei löytynyt
-    // if (person) {
-    //     res.json(person)
-    // } else {
-    //     res.status(404).send('<h1>404 not found</h1>').end()
-    // }
-
 })
 
 //DELETE
@@ -93,9 +81,6 @@ app.delete('/api/persons/:id', (req, res) => {
         }).catch(err => {
             console.log(err)
         })
-    // const personId = Number(req.params.id)
-    // persons = persons.filter(person => person.id !== personId)
-    // res.status(404).end()
 })
 
 //POST
@@ -104,17 +89,17 @@ app.post('/api/persons', (req, res) => {
     const body = req.body
     if (body.name === "" || body.name === undefined || body.number === "" || body.number === undefined) {
         res.status(400).json({ error: 'nimi tai numero puuttuu' })
-    } else if (persons.some(person => person.name === body.name)) {
-        //409 conflict
-        res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })
-    } else {
+    }
+    // else if (persons.some(person => person.name === body.name)) {
+    //     //409 conflict
+    //     res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })} 
+    else {
 
         //Tietokanta luo nyt ID:n
         const person = new Person({
             name: body.name,
             number: body.number
         })
-
         person //HUOM pienellä, koska const person = new Person ...
             .save()
             .then(newPerson => {
@@ -140,31 +125,3 @@ app.put('/api/persons/:id', (req, res) => {
             console.log(err)
         })
 })
-
-//MUUTTUJAT
-let persons = [
-    {
-        name: "Anton Moroz",
-        number: "050-999999",
-        id: 1
-    },
-    {
-        name: "Geir Siirde",
-        number: "050-000000",
-        id: 2
-    },
-    {
-        name: "Niko Haapis",
-        number: "050-111111",
-        id: 3
-    },
-    {
-        name: "Ravel Siirde",
-        number: "050-555555",
-        id: 4
-    }
-]
-
-//Testit persons - muuttujan alle, muuten tulee x is not defined
-//console.log("pituus...")
-//console.log(persons.length)

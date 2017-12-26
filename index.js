@@ -103,14 +103,17 @@ app.post('/api/persons', (req, res) => {
         res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })
     } else {
 
-        const person = {
+        //Tietokanta luo nyt ID:n
+        const person = new Person({
             name: body.name,
-            number: body.number,
-            id: Math.floor(Math.random() * 100000)
-        }
+            number: body.number
+        })
 
-        persons = persons.concat(person)
-        res.json(person)
+        person //HUOM pienellä, koska const person = new Person ...
+            .save()
+            .then(newPerson => {
+                res.json(formatPerson(newPerson))
+            })
     }
 })
 

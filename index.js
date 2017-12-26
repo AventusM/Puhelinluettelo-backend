@@ -70,16 +70,17 @@ app.post('/api/persons', (req, res) => {
     } else if (persons.some(person => person.name === body.name)) {
         //409 conflict
         res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })
-    }
+    } else {
 
-    const person = {
-        name: body.name,
-        number: body.number,
-        id: Math.floor(Math.random() * 100000)
-    }
+        const person = {
+            name: body.name,
+            number: body.number,
+            id: Math.floor(Math.random() * 100000)
+        }
 
-    persons = persons.concat(person)
-    res.json(person)
+        persons = persons.concat(person)
+        res.json(person)
+    }
 })
 
 //MUUTTUJAT

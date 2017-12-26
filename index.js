@@ -123,6 +123,24 @@ app.post('/api/persons', (req, res) => {
     }
 })
 
+//PUT
+//PUT
+app.put('/api/persons/:id', (req, res) => {
+    const body = req.body
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person
+        .findByIdAndUpdate(req.params.id, person, { new: body.number })
+        .then(updatedPerson => {
+            res.json(formatPerson(updatedPerson))
+        }).catch(err => {
+            console.log(err)
+        })
+})
+
 //MUUTTUJAT
 let persons = [
     {

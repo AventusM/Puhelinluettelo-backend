@@ -89,12 +89,7 @@ app.post('/api/persons', (req, res) => {
     const body = req.body
     if (body.name === "" || body.name === undefined || body.number === "" || body.number === undefined) {
         res.status(400).json({ error: 'nimi tai numero puuttuu' })
-    }
-    // else if (persons.some(person => person.name === body.name)) {
-    //     //409 conflict
-    //     res.status(409).json({ error: 'nimen tulee olla yksikäsitteinen' })} 
-    else {
-
+    } else {
         //Tietokanta luo nyt ID:n
         const person = new Person({
             name: body.name,
@@ -116,11 +111,14 @@ app.put('/api/persons/:id', (req, res) => {
         name: body.name,
         number: body.number
     }
-
     Person
         .findByIdAndUpdate(req.params.id, person, { new: body.number })
         .then(updatedPerson => {
-            res.json(formatPerson(updatedPerson))
+            if (body.number !== "") {
+                res.json(formatPerson(updatedPerson))
+            } else {
+                res.status(400).json({ error: 'numero puuttuu' }).end()
+            }
         }).catch(err => {
             console.log(err)
         })

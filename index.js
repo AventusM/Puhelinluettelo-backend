@@ -68,6 +68,9 @@ app.get('/api/persons/:id', (req, res) => {
         .findById(req.params.id)
         .then(foundPerson => {
             res.json(formatPerson(foundPerson))
+        }).catch(err => {
+            console.log(err)
+            res.status(404).send('<h2>404 not found</h2>').end()
         })
     // const personId = Number(req.params.id)
     // const person = persons.find(person => person.id === personId)
@@ -83,19 +86,22 @@ app.get('/api/persons/:id', (req, res) => {
 //DELETE
 //DELETE
 app.delete('/api/persons/:id', (req, res) => {
-    const personId = Number(req.params.id)
-    persons = persons.filter(person => person.id !== personId)
-    res.status(404).end()
+    Person
+        .findByIdAndRemove(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        }).catch(err => {
+            console.log(err)
+        })
+    // const personId = Number(req.params.id)
+    // persons = persons.filter(person => person.id !== personId)
+    // res.status(404).end()
 })
 
 //POST
 //POST
 app.post('/api/persons', (req, res) => {
     const body = req.body
-    // let errors = ["", undefined]
-    //Kaikennäköisiä ratkaisuja yritetty tämän iffihässäkän eliminoimiseksi
-    //1. indexOf
-    //2. bodyContent.filter((content) => errors.includes(content)) tms jokin vastaava stackoverflowsta
     if (body.name === "" || body.name === undefined || body.number === "" || body.number === undefined) {
         res.status(400).json({ error: 'nimi tai numero puuttuu' })
     } else if (persons.some(person => person.name === body.name)) {
